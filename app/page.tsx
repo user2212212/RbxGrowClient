@@ -1,11 +1,14 @@
-import Image from "next/image";
-import { rubik } from "./fonts";
+"use client"
 
-export default function Home() {
-  return (
-    <div className="flex flex-col justify-center items-center text-center">
-      <h1 className={`${rubik.className} text-white text-semibold`}>
-      </h1>
-    </div>
-  );
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+
+export default function Page() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.replace("/coinflip")
+  }, [router])
+
+  return null
 }

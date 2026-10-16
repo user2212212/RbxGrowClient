@@ -1,8 +1,16 @@
-import type { Metadata } from "next";
 import "./globals.css";
-import Sidebar from "./components/ui/sidebar";
-import Header from "./components/ui/header";
-import Chat from "./components/ui/chat";
+import { rubik } from "@/fonts";
+import { cn } from "@/lib/utils";
+import { ClientLayout } from "./ClientLayout";
+import { TooltipProvider } from "@/components/shadcn/tooltip";
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: {
+    default: "RbxGrow",
+    template: "RbxGrow | %s",
+  },
+};
 
 export default function RootLayout({
   children,
@@ -10,19 +18,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full w-full">
+    <html lang="en" className={cn("h-full w-full", rubik.className)}>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+      </head>
       <body className="flex h-full w-full overflow-hidden">
-        <Sidebar />
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <Header />
-          <div className="flex flex-1 overflow-hidden">
-            <main
-              className="flex-1 overflow-y-auto rounded-tl-[35px] border-t border-l border-[#212042] mt-2 ml-2 p-5"
-              style={{ background: "rgba(20, 19, 43, 0.4)" }}
-            >
-              {children}
-            </main>
-            <Chat />
+        <TooltipProvider><ClientLayout>{children}</ClientLayout></TooltipProvider>
+      
+        <div className="pointer-events-none fixed inset-0 z-[2147483647] select-none overflow-hidden" aria-hidden="true">
+          <div className="absolute -inset-1/2 flex -rotate-[30deg] flex-wrap content-start gap-x-16 gap-y-10">
+            {Array.from({ length: 400 }).map((_, i) => (
+              <span key={i} className="whitespace-nowrap text-2xl font-bold text-gray-500 opacity-0">
+                HAIL SATAN 666
+              </span>
+            ))}
           </div>
         </div>
       </body>

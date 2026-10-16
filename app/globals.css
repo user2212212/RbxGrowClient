@@ -1,13 +1,37 @@
 @import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 :root {
   --background: #111026;
   --foreground: #0F0E25;
-  --sidebar: #0C0A1C;
   --header: #0D0D26;
+  --header-mobile: #0B0A1C;
+  --sidebar: #0C0A1C;
   --chat: #0E0C21;
+  --giveaway: #121127;
+  --wallet: #16152C;
+  --icon-button: #141433;
+  --border-secondary: #212042;
+  --secondary-input-bg: #16142D;
+  --input: #121126;
+  --purple-secondary: #9245FF;
+  --purple-primary: #C188FE;
+  --icon-secondary: #ADA4C1;
+  --dark-purple: #230B3F;
+  --violet: #35135B;
+  --progress: #20192E;
+  --grey: #626B7F;
+  --grey-unfaded: #68749C;
+  --grey-faded: #848FA6;
+  --grey-secondary: #383D4B;
+  --destructive: #FF4545;
+  --alternative: #4A0000;
   --purple-gradient: linear-gradient(135deg, #C58EFE 0%, #9837FF 100%);
+  --purple-gradient-bottom: linear-gradient(to bottom, #C58EFE 0%, #9837FF 100%);
+  --purple-gradient-top: linear-gradient(to top, #C58EFE 0%, #9837FF 100%);
+  --purple-gradient-secondary: linear-gradient(to bottom, #C58EFE 0%, #AF64FF 50%, #9837FF 100%);
 }
 
 @theme inline {
@@ -15,12 +39,78 @@
   --color-foreground: var(--foreground);
   --color-sidebar: var(--sidebar);
   --color-header: var(--header);
+  --color-header-mobile: var(--header-mobile);
+  --color-secondary-input-bg: var(--secondary-input-bg);
   --color-chat: var(--chat);
+  --color-progress: var(--progress);
+  --color-giveaway: var(--giveaway);
+  --color-wallet: var(--wallet);
+  --color-alternative: var(--alternative);
+  --color-icon-button: var(--icon-button);
+  --color-secondary: var(--border-secondary);
+  --color-purple-primary: var(--purple-primary);
+  --color-input: var(--input);
+  --color-purple-secondary: var(--purple-secondary);
+  --color-icon-secondary: var(--icon-secondary);
+  --color-dark-purple: var(--dark-purple);
+  --color-violet: var(--violet);
+  --color-grey: var(--grey);
+  --color-grey-unfaded: var(--grey-unfaded);
+  --color-grey-secondary: var(--grey-secondary);
+  --color-grey-faded: var(--grey-faded);
+  --color-destructive: var(--destructive);
 }
 
 html, body {
   height: 100%;
   width: 100%;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #333846 #1f2430;
+}
+
+::-webkit-scrollbar,
+::-webkit-scrollbar:hover,
+::-webkit-scrollbar:active {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2430;
+}
+
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active,
+::-webkit-scrollbar-thumb:window-inactive {
+  width: 10px;
+  background-color: #333846;
+  border-radius: 9999px;
+  border: none;
+}
+
+::-webkit-scrollbar-corner {
+  background: #1f2430;
+}
+
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: none;
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 body {
@@ -38,4 +128,38 @@ body {
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
+}
+
+.text-purple-gradient-secondary {
+  background: var(--purple-gradient-secondary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.scrollbar-none {
+  scrollbar-width: none; 
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none; 
+}
+
+@keyframes coin-x { to { transform: translate3d(-91.6667%, 0, 0); } }
+@keyframes coin-y { to { transform: translate3d(0, -91.6667%, 0); } }
+
+.coin-roll-y {
+  width: 100%;
+  height: 1200%;
+  will-change: transform;
+  animation: coin-y 2.4s steps(12, jump-none) forwards;
+}
+
+.coin-roll-x {
+  width: 1200%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  will-change: transform;
+  animation: coin-x 0.2s steps(12, jump-none) 12;
 }
