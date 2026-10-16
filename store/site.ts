@@ -12,7 +12,7 @@ interface SiteStore {
   socket: Socket | null;
   connected: boolean;
   user: User | null;
-  inventory: Inventory | null,
+  inventory: Inventory | null;
   site: SiteConfig | null;
   onlineUsers: number;
   loading: boolean;
@@ -41,7 +41,14 @@ export const useSiteStore = create<SiteStore>((set, get) => {
       }, 100);
     }),
   ])
-    .then(([site, user]) => set({ site, user: user?.user ?? null, inventory: user?.inventory, loading: false }))
+    .then(([site, user]) =>
+      set({
+        site,
+        user: user?.user ?? null,
+        inventory: user?.inventory ?? null,
+        loading: false,
+      })
+    )
     .catch(() => toast.error("Something went wrong"));
 
   const socket = io(API, {
@@ -57,11 +64,15 @@ export const useSiteStore = create<SiteStore>((set, get) => {
   socket.on("users", (count: number) => set({ onlineUsers: count }));
   socket.on("site:update", (updatedFields: any) => {
     const current = get().site;
-    set({ site: current ? { ...current, settings: { ...(current as any).settings, ...updatedFields } } : ({ settings: updatedFields } as SiteConfig) });
+    set({
+      site: current
+        ? { ...current, settings: { ...(current as any).settings, ...updatedFields } }
+        : ({ settings: updatedFields } as SiteConfig),
+    });
   });
   socket.on("user:update", (updatedFields: any) => {
     const current: any = get().user;
-     if (!current) return;
+    if (!current) return;
 
     const ranks = updatedFields.ranks ?? [...current.ranks];
     for (const key in updatedFields)
@@ -93,12 +104,17 @@ export const useSiteStore = create<SiteStore>((set, get) => {
       socket.auth = { token };
       socket.disconnect().connect();
 
-      if (!token) return set({ user: null });
+      if (!token) return set({ user: null, inventory: null });
 
       fetch(`${API}/auth/me/user`, { headers: { Authorization: token } })
         .then((res) => (res.ok ? res.json() : null))
-        .then((user) => set({ user: user?.user ?? null }))
-        .catch(() => set({ user: null }));
+        .then((data) => {
+          if (get().token !== token) return;
+          set({ user: data?.user ?? null, inventory: data?.inventory ?? null });
+        })
+        .catch(() => {
+          if (get().token === token) set({ user: null, inventory: null });
+        });
     },
     setSession: (token: string, user: User) => {
       if (typeof window !== "undefined") {
@@ -108,6 +124,17 @@ export const useSiteStore = create<SiteStore>((set, get) => {
       set({ token, user });
       socket.auth = { token };
       socket.disconnect().connect();
+
+      fetch(`${API}/auth/me/user`, { headers: { Authorization: token } })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (get().token !== token) return;
+          set({
+            user: data?.user ?? user,
+            inventory: data?.inventory ?? null,
+          });
+        })
+        .catch(() => {});
     },
   };
 });

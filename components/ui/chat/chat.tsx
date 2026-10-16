@@ -162,8 +162,8 @@ export default function Chat({ className }: { className?: string }) {
           </InventoryModal>
 
           <div className="pointer-events-auto flex gap-2">
-            <div className="flex h-9.5 shrink-0 items-center gap-2.5 rounded-lg bg-wallet px-3">
-              <Image src="/icons/chatflag.svg" alt="US" width={32} height={17} className="object-cover" />
+            <div className="flex h-[38px] w-[90.51px] shrink-0 items-center gap-2.5 rounded-lg bg-wallet px-3">
+              <Image src="/icons/mainflag.png" alt="US" width={32} height={17} className="object-cover" />
               <div className="flex items-center gap-1.5">
                 <div className="flex items-center gap-1">
                   <div className="flex h-3.25 w-3.25 bg-purple-secondary items-center justify-center rounded-full animate-pulse">

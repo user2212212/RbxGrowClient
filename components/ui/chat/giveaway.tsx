@@ -223,10 +223,10 @@ export default function Giveaways() {
                           There aren't enough participants
                         </span>
                       ) : (
-                        <div className="flex items-center gap-1 min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0">
                           {g.winner?.avatar && !g.winner?.anonymous && (
                             <div className="relative rounded-full">
-                              <Image src={g.winner.avatar} alt={g.winner.username} width={30} height={30} className="mb-2" />
+                              <Image src={g.winner.avatar} alt={g.winner.username} width={25} height={25} className="rounded-full" />
                             </div>
                           )}
                           <span className="text-[13px] font-medium text-white text-center truncate">

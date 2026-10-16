@@ -119,7 +119,7 @@ function CoinflipRow({
           src={`/coins/${oppositeSide.toLowerCase()}.webp`}
           alt={oppositeSide}
           fill
-          className="object-contain"
+          className="object-contain ml-0.75"
         />
       </div>
     ) : (
@@ -231,8 +231,9 @@ function CoinflipRow({
 
       <div className="order-4 lg:order-none justify-self-end lg:w-40 flex flex-row items-center justify-end gap-2.5 shrink-0">
         {cf.winner && (
-          <div className="relative w-16 sm:w-27.5 h-10 shrink-0">
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20">
+          // Same size slot as the join / cancel button (icon-sm = 42px)
+          <div className="relative w-[42px] h-[42px] shrink-0">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 pointer-events-none">
               <Image
                 src={`/coins/${cf.winner.side.toLowerCase()}.webp`}
                 alt={cf.winner.side}
@@ -263,7 +264,7 @@ function CoinflipRow({
           <Button
             size="icon-sm"
             variant="icon"
-            className="w-10! h-10! rounded-[9px]! bg-secondary-input-bg! shrink-0"
+            className="bg-secondary-input-bg!"
             style={{ backgroundImage: "linear-gradient(180deg, #FF8989 0%, #FF3737 100%)" }}
             onClick={() => onDelete(cf._id)}
           >
@@ -295,7 +296,7 @@ function CoinflipRow({
                   {["HEADS", "TAILS"].map((s) => (
                     <div
                       key={s}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-opacity ${s === (cf.players.creator.side === "HEADS" ? "TAILS" : "HEADS") ? "" : "scale-97 opacity-40 "}`}                      >
+                      className={`rounded-full flex items-center justify-center transition-opacity ${s === (cf.players.creator.side === "HEADS" ? "TAILS" : "HEADS") ? "" : "scale-97 opacity-40 "}`}                      >
                       <Image src={`/coins/${s.toLowerCase()}.webp`} alt={s} width={40} height={40} />
                     </div>
                   ))}
@@ -304,7 +305,6 @@ function CoinflipRow({
             }}>
             <Button
               size="icon-sm"
-              className="w-10! h-10! rounded-[9px]! shrink-0"
               onClick={() => onJoin(cf._id)}
             >
               <PlayIcon className="w-3.75 h-3.75" />
@@ -316,7 +316,7 @@ function CoinflipRow({
           <Button
             size="icon-sm"
             variant="icon"
-            className="w-10! h-10! rounded-[9px]! bg-secondary-input-bg! shrink-0"
+            className="bg-secondary-input-bg!"
           >
             <EyeIcon className="w-4 h-3.25 text-grey" />
           </Button>

@@ -137,11 +137,11 @@ export function UserProfile({ userid, children }: UserProfileProps) {
                     closeComplete: true
                   },
                   content: (
-                    <div className="flex items-center gap-2.5 min-w-0 p-1.75">
+                    <div className="flex items-center gap-2 min-w-0 p-1.75">
                       <div className="w-9 h-9 rounded-full overflow-hidden relative shrink-0">
                         <Image src={profile.avatar} alt={profile.username} fill className="object-cover" />
                       </div>
-                      <span className="text-white text-[14px] font-medium truncate">{profile.username}</span>
+                      <span className="text-white text-[14.5px] font-medium truncate">{profile.username}</span>
                     </div>
                   ),
                 }}
