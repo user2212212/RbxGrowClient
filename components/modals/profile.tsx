@@ -138,7 +138,7 @@ export function UserProfile({ userid, children }: UserProfileProps) {
                   },
                   content: (
                     <div className="flex items-center gap-2 min-w-0 p-1.75">
-                      <div className="w-9 h-9 rounded-full overflow-hidden relative shrink-0">
+                      <div className="w-9 h-9 rounded-full overflow-hidden relative shrink-0 mb-1.5">
                         <Image src={profile.avatar} alt={profile.username} fill className="object-cover" />
                       </div>
                       <span className="text-white text-[14.5px] font-medium truncate">{profile.username}</span>
