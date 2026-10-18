@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { create } from "zustand";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { API } from "@/lib/env";
 import { useSiteStore } from "@/store/site";
 import { Button } from "@/components/shadcn/button";
@@ -23,7 +24,7 @@ import Giveaway from "./giveaway";
 interface ChatStore {
   messages: ChatMessage[];
   channel: string | null;
-  getMessages: (channel: string) => Promise<void>;
+  getMessages: (channel: string, errors: { load: string; generic: string }) => Promise<void>;
   addMessage: (message: ChatMessage) => void;
 }
 
@@ -31,17 +32,17 @@ const useChatStore = create<ChatStore>((set, get) => ({
   messages: [],
   channel: null,
 
-  getMessages: async (channel) => {
+  getMessages: async (channel, errors) => {
     try {
       const res = await fetch(`${API}/chat/${channel}/messages?limit=25`);
       const data = await res.json();
       if (!res.ok || !data.success) {
-        toast.error(data?.message ?? "sorry we couldn't get the message.");
+        toast.error(data?.message ?? errors.load);
         return;
       }
       set({ messages: [...data.messages].reverse().slice(-25), channel });
     } catch {
-      toast.error("Something went wrong");
+      toast.error(errors.generic);
     }
   },
 
@@ -52,6 +53,8 @@ const useChatStore = create<ChatStore>((set, get) => ({
 }));
 
 export default function Chat({ className }: { className?: string }) {
+  const t = useTranslations("Chat");
+  const tc = useTranslations("Common");
   const { site, socket, token, user, onlineUsers, connected } = useSiteStore();
   const { messages, getMessages, addMessage } = useChatStore();
   const { emojis, getEmojis } = useEmojiStore();
@@ -65,7 +68,7 @@ export default function Chat({ className }: { className?: string }) {
   const channelName = (site as any)?.chat?.default?.name as string | undefined;
 
   useEffect(() => {
-    if (channelName) void getMessages(channelName);
+    if (channelName) void getMessages(channelName, { load: t("loadError"), generic: tc("somethingWentWrong") });
     void getEmojis();
   }, [channelName]);
 
@@ -104,7 +107,7 @@ export default function Chat({ className }: { className?: string }) {
   const sendMessage = async () => {
     const content = message.trim();
     if (!channelName || !content || sending) return;
-    if (!token) return toast.error("You need to be logged in to chat");
+    if (!token) return toast.error(t("loginRequired"));
 
     setSending(true);
     try {
@@ -118,7 +121,7 @@ export default function Chat({ className }: { className?: string }) {
       setMessage("");
       setReplyingTo(null);
     } catch {
-      toast.error("Something went wrong");
+      toast.error(tc("somethingWentWrong"));
     } finally {
       setSending(false);
     }
@@ -128,11 +131,11 @@ export default function Chat({ className }: { className?: string }) {
     <div className={cn("w-82.5 h-full flex flex-col bg-chat shrink-0", className)}>
       <div className="px-1.25 space-y-[-5px]">
         <Giveaway />
-        <div className="flex w-full items-center justify-between py-2.5 px-1.5">
+        <div className="flex w-full items-center justify-between py-2.5 px-1.5 select-none">
           <InventoryModal
             data={{
               action: {
-                button: "Create Giveaway",
+                button: t("createGiveaway"),
                 endpoint: `${API}/site/giveaways/create`,
                 secondaction: InventorySecondAction.SelectBest,
                 body: (items) => ({ items, duration }),
@@ -208,14 +211,14 @@ export default function Chat({ className }: { className?: string }) {
                     className="text-xs font-bold"
                     style={getRankColor((!m.user || m.user.anonymous) ? undefined : getRank(site?.ranks, m.user.ranks)?.color)}
                   >
-                    {!m.user || m.user.anonymous ? "Anonymous" : m.user.username ?? "Unknown"}
+                    {!m.user || m.user.anonymous ? tc("anonymous") : m.user.username ?? tc("unknown")}
                   </span>
                 </span>
                 <div className="bg-foreground rounded-[7px] px-2.5 py-3">
                   <p className="text-[12px] font-medium leading-3.5 text-grey">
                     {m.replyTo && (
                       <span className="text-[12px] font-bold text-white mr-1">
-                        @{m.replyTo.user?.anonymous || !m.replyTo.user ? "Anonymous" : m.replyTo.user.username}
+                        @{m.replyTo.user?.anonymous || !m.replyTo.user ? tc("anonymous") : m.replyTo.user.username}
                       </span>
                     )}
                     {m.content.split(" ").map((word, i) => {
@@ -251,10 +254,15 @@ export default function Chat({ className }: { className?: string }) {
           <div ref={bottomRef} />
         </div>
 
-      <div className="relative px-5 pb-5 flex flex-col gap-3.5 outline-hidden">
+      <div className="relative px-5 pb-5 flex flex-col gap-3.5 outline-hidden select-none">
         {replyingTo && (
           <div className="absolute bottom-full left-5 right-5 font-semibold text-grey flex p-2 items-center justify-between">
-            <span className="text-[11px]">Reply to <span className="text-white font-bold">@{replyingTo.user?.anonymous || !replyingTo.user ? "Anonymous" : replyingTo.user.username}</span></span>
+            <span className="text-[11px]">
+              {t.rich("replyTo", {
+                username: `@${replyingTo.user?.anonymous || !replyingTo.user ? tc("anonymous") : replyingTo.user.username}`,
+                name: (chunks) => <span className="text-white font-bold">{chunks}</span>,
+              })}
+            </span>
             <button type="button" onClick={() => setReplyingTo(null)} className="text-white cursor-pointer text-[15px]">
               ×
             </button>
@@ -267,7 +275,7 @@ export default function Chat({ className }: { className?: string }) {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), sendMessage())}
             disabled={!user}
-            className="bg-input h-12.5 pr-12 text-grey placeholder:text-grey text-[16px] md:text-[14px] placeholder:text-[14px] font-medium placeholder:font-medium" placeholder="Type a message..."
+            className="bg-input h-12.5 pr-12 text-grey placeholder:text-grey text-[16px] md:text-[14px] placeholder:text-[14px] font-medium placeholder:font-medium" placeholder={t("placeholder")}
           />
           <EmojiPopover onSelect={handleEmojiSelect} />
         </div>
@@ -277,7 +285,7 @@ export default function Chat({ className }: { className?: string }) {
           disabled={!user}
           className="h-9.25! rounded-[7px] font-bold text-[14px] active:not-aria-[haspopup]:scale-99"
         >
-          SEND
+          {t("send")}
         </Button>
       </div>
     </div>

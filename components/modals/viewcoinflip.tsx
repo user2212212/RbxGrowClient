@@ -4,6 +4,7 @@ import Image from "next/image"
 import { X } from "lucide-react"
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@/components/shadcn/dialog"
 import { format } from "@/lib/value"
+import { useLocale } from "next-intl";
 import { CrownIcon, WalletIcon } from "@/components/icons"
 import UserProfile from "@/components/modals/profile"
 import { ItemCard } from "@/components/ui/others/item"
@@ -18,6 +19,7 @@ type Side = {
 
 function CoinRoll({ winSide, onDone }: { winSide: string; onDone: () => void }) {
   const [sheetReady, setSheetReady] = useState(false)
+  const locale = useLocale();
 
   useEffect(() => {
     let cancelled = false
@@ -56,8 +58,8 @@ function CoinRoll({ winSide, onDone }: { winSide: string; onDone: () => void }) 
 }
 
 function View({ cf }: { cf: Coinflip }) {
-  // already finished when opened -> just the result. Winner arrives while open -> roll plays first.
   const [rolled, setRolled] = useState(!!cf.winner)
+  const locale = useLocale();
 
   const { creator, joiner } = cf.players
   const joinerSide = creator.side === "HEADS" ? "TAILS" : "HEADS"
@@ -161,7 +163,7 @@ function View({ cf }: { cf: Coinflip }) {
           </div>
           <div className="flex items-center gap-1.5">
             <WalletIcon className="w-3.75 h-3.75 shrink-0" />
-            <span className="text-purple-gradient text-[14px] font-[420]">{format(total)}</span>
+            <span className="text-purple-gradient text-[14px] font-[420]">{format(total, locale)}</span>
           </div>
         </div>
       </div>
@@ -172,7 +174,7 @@ function View({ cf }: { cf: Coinflip }) {
             <div className="flex items-center justify-between px-3 sm:px-6 pb-2.5 text-[14px] leading-3.75">
               <div className="flex items-center gap-1.5">
                 <WalletIcon className="w-3.75 h-3.75 shrink-0" />
-                <span className="text-purple-gradient font-[420]">{format(s.value)}</span>
+                <span className="text-purple-gradient font-[420]">{format(s.value, locale)}</span>
               </div>
               <span className="text-grey-unfaded text-[12px] font-medium">{s.items.length} items</span>
               <span className="text-white font-[420]">{percentages[i].toFixed(2)}%</span>

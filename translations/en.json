@@ -1,0 +1,88 @@
+{
+  "Common": {
+    "somethingWentWrong": "Something went wrong",
+    "anonymous": "Anonymous",
+    "unknown": "Unknown"
+  },
+  "Sidebar": {
+    "home": "Home",
+    "games": "GAMES",
+    "more": "MORE",
+    "nav": {
+      "coinflip": "Coinflip",
+      "upgrader": "Upgrader",
+      "market": "Market",
+      "fairness": "Fairness",
+      "support": "Support",
+      "help": "Help"
+    },
+    "currentRank": "[CURRENT RANK]",
+    "nextRank": "[NEXT RANK]"
+    },
+  "Header": {
+    "withdrawItems": "Withdraw Items"
+  },
+  "Coinflip": {
+    "title": "Coinflip",
+    "loadError": "Couldn't load coinflips",
+    "totalFlips": "{count} Total flips",
+    "joinableFlips": "{count} Joinable flips",
+    "createFlip": "Create Flip",
+    "joinFlip": "Join Flip",
+    "upTo": "up to {value}",
+    "sides": {
+      "HEADS": "Heads",
+      "TAILS": "Tails"
+    }
+  },
+  "Chat": {
+    "loadError": "Sorry, we couldn't get the messages.",
+    "loginRequired": "You need to be logged in to chat",
+    "placeholder": "Type a message...",
+    "send": "SEND",
+    "createGiveaway": "Create Giveaway",
+    "replyTo": "Reply to <name>{username}</name>"
+  },
+  "Giveaway": {
+    "entries": "{count} Entries",
+    "countdown": "{hours}h {minutes}m {seconds}s",
+    "join": "Join",
+    "joined": "Joined",
+    "loginRequired": "You need to be logged in to join",
+    "notEnoughParticipants": "There aren't enough participants",
+    "hasWon": "{name} has won!"
+  },
+  "Maintenance": {
+    "title": "We are currently under Maintenance",
+    "subtitle": "We will be back in no time, and better than ever!",
+    "socials": "Want updates? Join our socials"
+  },
+  "Inventory": {
+    "search": "Search...",
+    "maximumItems": "Maximum {count} items",
+    "maxSelect": "You can only select {count} items",
+    "alreadySelectedAll": "You've already selected all items!",
+    "toJoin": "To Join:",
+    "totalValue": "Total Value:",
+    "selectedValue": "Selected Value:",
+    "range": "Range:",
+    "value": "Value:",
+    "selected": "Selected:",
+    "autoSelect": "Auto select",
+    "selectBest": "Select best",
+    "selectAll": "Select all",
+    "close": "Close"
+  },
+  "Profile": {
+    "joined": "Joined {date}",
+    "hiddenProfile": "The profile is hidden to others",
+    "hiddenStats": "The stats are hidden to others",
+    "wagered": "WAGERED",
+    "profit": "PROFIT",
+    "tipSent": "TIP SENT",
+    "tipReceived": "TIP RECEIVED",
+    "tipItems": "Tip Items",
+    "tip": "Tip",
+    "close": "Close"
+  }
+}

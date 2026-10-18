@@ -1,0 +1,88 @@
+{
+  "Common": {
+    "somethingWentWrong": "問題が発生しました",
+    "anonymous": "匿名",
+    "unknown": "不明"
+  },
+  "Sidebar": {
+    "home": "ホーム",
+    "games": "ゲーム",
+    "more": "その他",
+    "nav": {
+      "coinflip": "コインフリップ",
+      "upgrader": "アップグレーダー",
+      "market": "マーケット",
+      "fairness": "公平性",
+      "support": "サポート",
+      "help": "ヘルプ"
+    },
+    "currentRank": "[現在のランク]",
+    "nextRank": "[次のランク]"
+  },
+  "Header": {
+    "withdrawItems": "アイテムを引き出す"
+  },
+  "Coinflip": {
+    "title": "コインフリップ",
+    "loadError": "コインフリップを読み込めませんでした",
+    "totalFlips": "合計 {count} フリップ",
+    "joinableFlips": "参加可能 {count} フリップ",
+    "createFlip": "フリップを作成",
+    "joinFlip": "フリップに参加",
+    "upTo": "最大 {value}",
+    "sides": {
+      "HEADS": "表",
+      "TAILS": "裏"
+    }
+  },
+  "Chat": {
+    "loadError": "メッセージを取得できませんでした。",
+    "loginRequired": "チャットするにはログインが必要です",
+    "placeholder": "メッセージを入力...",
+    "send": "送信",
+    "createGiveaway": "ギブアウェイを作成",
+    "replyTo": "<name>{username}</name> への返信"
+  },
+  "Giveaway": {
+    "entries": "{count} 件の参加",
+    "countdown": "{hours}時間 {minutes}分 {seconds}秒",
+    "join": "参加",
+    "joined": "参加済み",
+    "loginRequired": "参加するにはログインが必要です",
+    "notEnoughParticipants": "参加者が足りません",
+    "hasWon": "{name} さんが当選しました!"
+  },
+  "Maintenance": {
+    "title": "現在メンテナンス中です",
+    "subtitle": "まもなく、よりよくなって戻ってきます!",
+    "socials": "最新情報はSNSでチェック"
+  },
+  "Inventory": {
+    "search": "検索...",
+    "maximumItems": "最大 {count} 個",
+    "maxSelect": "選択できるのは最大 {count} 個です",
+    "alreadySelectedAll": "すべてのアイテムを選択済みです!",
+    "toJoin": "参加条件:",
+    "totalValue": "合計価値:",
+    "selectedValue": "選択中の価値:",
+    "range": "範囲:",
+    "value": "価値:",
+    "selected": "選択中:",
+    "autoSelect": "自動選択",
+    "selectBest": "最高額を選択",
+    "selectAll": "すべて選択",
+    "close": "閉じる"
+  },
+  "Profile": {
+    "joined": "{date} に参加",
+    "hiddenProfile": "プロフィールは他のユーザーに非公開です",
+    "hiddenStats": "統計は他のユーザーに非公開です",
+    "wagered": "賭け総額",
+    "profit": "利益",
+    "tipSent": "チップ送信",
+    "tipReceived": "チップ受取",
+    "tipItems": "アイテムをチップする",
+    "tip": "チップ",
+    "close": "閉じる"
+  }
+}

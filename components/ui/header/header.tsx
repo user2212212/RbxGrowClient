@@ -9,12 +9,15 @@ import { useSiteStore } from "@/store/site";
 import { DropdownIcon, DropdownSecondaryIcon, InventoryIcon, WalletIcon } from "@/components/icons";
 import { format } from "@/lib/value";
 import { getRank, getRankColor } from "@/lib/ranks";
+import { useLocale, useTranslations } from "next-intl";
 import { API } from "@/lib/env";
 import NotificationPopover from "./notification";
 import InventoryModal from "../../modals/inventory";
 
 export default function Header({ className }: { className?: string }) {
   const { user, inventory, site } = useSiteStore();
+  const locale = useLocale();
+  const t = useTranslations("Header");
   const router = useRouter();
 
   return (
@@ -33,14 +36,14 @@ export default function Header({ className }: { className?: string }) {
               <div className="flex items-center gap-2 px-3 h-full flex-1 min-w-0">
                 <WalletIcon className="w-5 h-4 shrink-0" />
                 <span className="text-[14px] font-semibold bg-[linear-gradient(113.96deg,#AE62FF_0%,#DAB8FF_50%,#AE62FF_100%)] bg-clip-text text-transparent truncate">
-                  {format(inventory?.value || 0.00)}
+                  {format(inventory?.value || 0.00, locale)}
                 </span>
                 <DropdownSecondaryIcon className="w-3.5 h-3.5 text-grey-secondary m-[1.5px] shrink-0 ml-auto" />
               </div>
               <InventoryModal
                 data={{
                   action: {
-                    button: "Withdraw items",
+                    button: t("withdrawItems"),
                     endpoint: `${API}/auth/me/withdraw`,
                     body: (items) => ({ items }),
                     closeComplete: false

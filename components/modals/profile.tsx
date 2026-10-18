@@ -7,6 +7,7 @@ import { useSiteStore } from "@/store/site"
 import { getRank, getRankColor } from "@/lib/ranks"
 import { X } from "lucide-react"
 import { format } from "@/lib/value"
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/shadcn/button"
 import { Spinner } from "@/components/shadcn/spinner"
 import toast from "react-hot-toast"
@@ -21,6 +22,9 @@ export function UserProfile({ userid, children }: UserProfileProps) {
   const [open, setOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [profile, setProfile] = React.useState<any>(null)
+  const locale = useLocale();
+  const t = useTranslations("Profile");
+  const tc = useTranslations("Common");
   const { site, token, user } = useSiteStore()
 
   React.useEffect(() => {
@@ -39,7 +43,7 @@ export function UserProfile({ userid, children }: UserProfileProps) {
         setProfile(data.user)
       })
       .catch(() => {
-        toast.error("Something went wrong")
+        toast.error(tc("somethingWentWrong"))
         setOpen(false)
       })
       .finally(() => setLoading(false))
@@ -59,7 +63,7 @@ export function UserProfile({ userid, children }: UserProfileProps) {
           type="button"
           onClick={() => setOpen(false)}
           className="absolute top-4 right-4 cursor-pointer"
-          aria-label="Close"
+          aria-label={t("close")}
         >
           <X className="w-4 h-4 text-grey" />
         </button>
@@ -88,11 +92,11 @@ export function UserProfile({ userid, children }: UserProfileProps) {
                   </div>
                   <div className="flex-1 flex flex-col">
                     <span className="text-[10px] font-medium text-grey whitespace-nowrap">
-                      {`Joined ${new Date(profile.joined).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}`}
+                      {t("joined", { date: new Date(profile.joined).toLocaleDateString(locale === "en" ? "en-US" : locale, { month: "long", day: "numeric", year: "numeric" }) })}
                     </span>
                     {(profile.settings?.anonymousMode || profile.settings?.hiddenStats) && (
                       <span className="text-[10px] font-medium text-grey whitespace-nowrap">
-                        {profile.settings?.anonymousMode ? "The profile is hidden to others" : "The stats are hidden to others"}
+                        {profile.settings?.anonymousMode ? t("hiddenProfile") : t("hiddenStats")}
                       </span>
                     )}
                   </div>
@@ -101,13 +105,13 @@ export function UserProfile({ userid, children }: UserProfileProps) {
 
               <div className="grid grid-cols-2 gap-2 w-full">
                 {[
-                  { label: "WAGERED", value: profile.stats?.wager ?? "??" },
-                  { label: "PROFIT", value: profile.stats?.profit ?? "??" },
-                  { label: "TIP SENT", value: profile.stats?.won ?? "??" },
-                  { label: "TIP RECIVIED", value: profile.stats?.lost ?? "??" },
+                  { key: "wagered", value: profile.stats?.wager ?? "??" },
+                  { key: "profit", value: profile.stats?.profit ?? "??" },
+                  { key: "tipSent", value: profile.stats?.won ?? "??" },
+                  { key: "tipReceived", value: profile.stats?.lost ?? "??" },
                 ].map((stat) => (
                   <div
-                    key={stat.label}
+                    key={stat.key}
                     className="flex flex-col items-center justify-center gap-1 h-14 rounded-[10px] bg-[rgba(15,14,37,0.8)]"
                   >
                     <span
@@ -119,10 +123,10 @@ export function UserProfile({ userid, children }: UserProfileProps) {
                         backgroundClip: "text",
                       }}
                     >
-                      {format(stat.value)}
+                      {format(stat.value, locale)}
                     </span>
                     <span className="text-[10px] font-bold leading-3 text-grey-faded">
-                      {stat.label}
+                      {t(stat.key)}
                     </span>
                   </div>
                 ))}
@@ -131,7 +135,7 @@ export function UserProfile({ userid, children }: UserProfileProps) {
               <InventoryModal
                 data={{
                   action: {
-                    button: "Tip Items",
+                    button: t("tipItems"),
                     endpoint: `${API}/users/user/${profile.username}/tip`,
                     body: (items) => ({ items }),
                     closeComplete: true
@@ -150,7 +154,7 @@ export function UserProfile({ userid, children }: UserProfileProps) {
                 variant={"default"}
                 className="w-full"
               >
-                Tip
+                {t("tip")}
               </Button>
               </InventoryModal>
             </>

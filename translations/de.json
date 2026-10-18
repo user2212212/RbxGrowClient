@@ -1,0 +1,88 @@
+{
+  "Common": {
+    "somethingWentWrong": "Etwas ist schiefgelaufen",
+    "anonymous": "Anonym",
+    "unknown": "Unbekannt"
+  },
+  "Sidebar": {
+    "home": "Startseite",
+    "games": "SPIELE",
+    "more": "MEHR",
+    "nav": {
+      "coinflip": "Coinflip",
+      "upgrader": "Upgrader",
+      "market": "Markt",
+      "fairness": "Fairness",
+      "support": "Support",
+      "help": "Hilfe"
+    },
+    "currentRank": "[AKTUELLER RANK]",
+    "nextRank": "[NÄCHSTER RANK]"
+  },
+  "Header": {
+    "withdrawItems": "Withdraw Items"
+  },
+  "Coinflip": {
+    "title": "Coinflip",
+    "loadError": "Coinflips konnten nicht geladen werden",
+    "totalFlips": "{count} Flips insgesamt",
+    "joinableFlips": "{count} beitretbare Flips",
+    "createFlip": "Flip erstellen",
+    "joinFlip": "Flip beitreten",
+    "upTo": "bis zu {value}",
+    "sides": {
+      "HEADS": "Kopf",
+      "TAILS": "Zahl"
+    }
+  },
+  "Chat": {
+    "loadError": "Die Nachrichten konnten leider nicht geladen werden.",
+    "loginRequired": "Du musst angemeldet sein, um zu chatten",
+    "placeholder": "Nachricht versenden...",
+    "send": "SENDEN",
+    "createGiveaway": "Giveaway erstellen",
+    "replyTo": "Antwort an <name>{username}</name>"
+  },
+  "Giveaway": {
+    "entries": "{count} Teilnahmen",
+    "countdown": "{hours} Std. {minutes} Min. {seconds} Sek.",
+    "join": "Beitreten",
+    "joined": "Beigetreten",
+    "loginRequired": "Du musst angemeldet sein, um beizutreten",
+    "notEnoughParticipants": "Es gibt nicht genug Teilnehmer",
+    "hasWon": "{name} hat gewonnen!"
+  },
+  "Maintenance": {
+    "title": "Wir befinden uns derzeit in Wartung",
+    "subtitle": "Wir sind gleich zurück, und besser als je zuvor!",
+    "socials": "Du willst Updates? Folge uns in den sozialen Medien"
+  },
+  "Inventory": {
+    "search": "Suchen...",
+    "maximumItems": "Maximal {count} Items",
+    "maxSelect": "Du kannst nur {count} Items auswählen",
+    "alreadySelectedAll": "Du hast bereits alle Items ausgewählt!",
+    "toJoin": "Zum Beitreten:",
+    "totalValue": "Gesamtwert:",
+    "selectedValue": "Ausgewählter Wert:",
+    "range": "Bereich:",
+    "value": "Wert:",
+    "selected": "Ausgewählt:",
+    "autoSelect": "Automatisch wählen",
+    "selectBest": "Bestes wählen",
+    "selectAll": "Alle wählen",
+    "close": "Schließen"
+  },
+  "Profile": {
+    "joined": "Beigetreten am {date}",
+    "hiddenProfile": "Das Profil ist für andere versteckt",
+    "hiddenStats": "Die Statistiken sind für andere versteckt",
+    "wagered": "EINSÄTZE",
+    "profit": "GEWINN",
+    "tipSent": "TIP GESENDET",
+    "tipReceived": "TIP ERHALTEN",
+    "tipItems": "Items als Tip senden",
+    "tip": "Tip",
+    "close": "Schließen"
+  }
+}

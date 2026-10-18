@@ -12,10 +12,11 @@ import toast from "react-hot-toast";
 import { ArrowIcon, WalletIcon } from "@/components/icons";
 import Countdown from "react-countdown";
 import { format } from "@/lib/value";
+import { useLocale, useTranslations } from "next-intl";
 
 interface GiveawayStore {
   giveaways: Giveaway[];
-  getGiveaways: (token?: string | null) => Promise<void>;
+  getGiveaways: (token: string | null | undefined, errors: { generic: string }) => Promise<void>;
   addGiveaway: (g: Giveaway) => void;
   updateParticipants: (u: { id: string; participants?: number }) => void;
   endGiveaway: (u: { id: string; status: string; winner: any; endedAt: string }) => void;
@@ -26,7 +27,7 @@ interface GiveawayStore {
 const useGiveawayStore = create<GiveawayStore>((set, get) => ({
   giveaways: [],
 
-  getGiveaways: async (token) => {
+  getGiveaways: async (token, errors) => {
     try {
       const res = await fetch(`${API}/site/giveaways/list`, {
         headers: token ? { Authorization: token } : undefined,
@@ -37,7 +38,7 @@ const useGiveawayStore = create<GiveawayStore>((set, get) => ({
         giveaways: (data.giveaways ?? []).map((g: any) => ({ ...g, id: g.id ?? g._id })),
       });
     } catch {
-      toast.error("Something went wrong");
+      toast.error(errors.generic);
     }
   },
 
@@ -71,15 +72,18 @@ const useGiveawayStore = create<GiveawayStore>((set, get) => ({
 }));
 
 export default function Giveaways() {
+  const t = useTranslations("Giveaway");
+  const tc = useTranslations("Common");
   const { socket, token } = useSiteStore();
   const { giveaways, getGiveaways, addGiveaway, updateParticipants, endGiveaway, removeGiveaway, setJoined } = useGiveawayStore();
   const [api, setApi] = useState<CarouselApi>();
   const [joining, setJoining] = useState(false);
+  const locale = useLocale();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
   useEffect(() => {
-    void getGiveaways(token);
+    void getGiveaways(token, { generic: tc("somethingWentWrong") });
   }, [token]);
 
   useEffect(() => {
@@ -131,7 +135,7 @@ export default function Giveaways() {
 
   const join = async (id: string) => {
     if (joining) return;
-    if (!token) return toast.error("You need to be logged in to join");
+    if (!token) return toast.error(t("loginRequired"));
 
     setJoining(true);
     try {
@@ -143,7 +147,7 @@ export default function Giveaways() {
       if (!res.ok || !data.success) return toast.error(data?.message);
       setJoined(id);
     } catch {
-      toast.error("Something went wrong");
+      toast.error(tc("somethingWentWrong"));
     } finally {
       setJoining(false);
     }
@@ -161,13 +165,13 @@ export default function Giveaways() {
                 <div className="w-full h-38 bg-giveaway shadow-sm rounded-[10px] flex flex-col items-center justify-between gap-2.5 p-1.5 px-3 select-none">
                   <div className="w-full relative flex items-center">
                     <span className="flex-1 text-[12px] font-semibold text-grey">
-                      {g.participants} Entries
+                      {t("entries", { count: g.participants })}
                     </span>
                     <span className="absolute left-1/2 -translate-x-1/2 text-[12px] font-semibold text-grey-secondary whitespace-nowrap">
                       <Countdown
                         date={new Date(g.endsAt).getTime()}
                         renderer={({ hours, minutes, seconds }) => (
-                          <>{hours}h {minutes}m {seconds}s</>
+                          <>{t("countdown", { hours, minutes, seconds })}</>
                         )}
                       />
                     </span>
@@ -176,7 +180,7 @@ export default function Giveaways() {
                         <Image src={!g.starter || g.starter.anonymous ? "/icons/anonymouse.webp" : g.starter.avatar ?? "/icons/anonymouse.webp"} alt={g.starter.username} width={18} height={18} className="rounded-full shrink-0" />
                       )}
                       <span className="inline-block max-w-[9ch] truncate">
-                        {g.starter.anonymous ? "Anonymous" : g.starter.username}
+                        {g.starter.anonymous ? tc("anonymous") : g.starter.username}
                       </span>
                     </span>
                   </div>
@@ -201,7 +205,7 @@ export default function Giveaways() {
                         <div className="flex items-center gap-1">
                           <WalletIcon className="w-4 h-4" />
                           <span className="text-[12px] font-semibold text-white">
-                            {format(g.item.value)}
+                            {format(g.item.value, locale)}
                           </span>
                         </div>
                       </div>
@@ -220,7 +224,7 @@ export default function Giveaways() {
                     {g.winner ? (
                       g.status?.toUpperCase() === "REFUNDED" ? (
                         <span className="text-[13px] font-medium text-white text-center truncate">
-                          There aren't enough participants
+                          {t("notEnoughParticipants")}
                         </span>
                       ) : (
                         <div className="flex items-center gap-1.5 min-w-0">
@@ -230,7 +234,7 @@ export default function Giveaways() {
                             </div>
                           )}
                           <span className="text-[13px] font-medium text-white text-center truncate">
-                            {g.winner?.anonymous ? "Anonymous" : g.winner?.username} has won!
+                            {t("hasWon", { name: g.winner?.anonymous ? tc("anonymous") : g.winner?.username })}
                           </span>
                         </div>
                       )
@@ -242,7 +246,7 @@ export default function Giveaways() {
                         onClick={() => join(g.id)}
                         className="bg-[linear-gradient(160.96deg,#AE62FF_0%,#DAB8FF_10%,#AE62FF_100%)] border-0 h-9.75 p-0! w-full rounded-[12.5px] font-semibold active:not-aria-[haspopup]:scale-99"
                       >
-                        {g.joined ? "Joined" : "Join"}
+                        {g.joined ? t("joined") : t("join")}
                       </Button>
                     )}
                   </div>

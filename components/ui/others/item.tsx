@@ -4,6 +4,7 @@ import { format } from "@/lib/value";
 import { WalletIcon } from "@/components/icons";
 import { Item } from "@/types/item";
 import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
 import { useSiteStore } from "@/store/site";
 
 interface ItemCardProps {
@@ -15,6 +16,7 @@ interface ItemCardProps {
 export const ItemCard = React.memo(
   function ItemCard({ item, isSelected = false, onToggle }: ItemCardProps) {
     const rarities = useSiteStore((s) => s.site!.rarities)
+    const locale = useLocale()
     const rarityColor = rarities.find((r) => r._id.toLowerCase() === item.rarity?.toLowerCase())?.color
     const isRainbow = item.variants.mutation === "RAINBOW" || item.rarity?.toLowerCase() === "super"
     const bottomBorder = isRainbow
@@ -74,7 +76,7 @@ export const ItemCard = React.memo(
                 </span>
                 <div className="flex items-center gap-1">
                   <WalletIcon className="w-3.5 h-3.5 sm:w-3.25 sm:h-3.25 shrink-0" />
-                  <span className="text-purple-gradient text-[13px] sm:text-[12px] font-medium select-none truncate">{format(item.value)}</span>
+                  <span className="text-purple-gradient text-[13px] sm:text-[12px] font-medium select-none truncate">{format(item.value, locale)}</span>
                 </div>
               </div>
             </div>

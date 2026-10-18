@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, motion } from "framer-motion";
 import { API } from "@/lib/env";
 import { useSiteStore } from "@/store/site";
@@ -21,7 +22,7 @@ import UserProfile from "../modals/profile";
 interface CoinflipStore {
   coinflips: Coinflip[];
   loading: boolean;
-  getCoinflips: (token: string | null) => Promise<void>;
+  getCoinflips: (token: string | null, errors: { load: string; generic: string }) => Promise<void>;
   addCoinflip: (cf: Coinflip) => void;
   updateCoinflip: (cf: Coinflip) => void;
   removeCoinflip: (id: string) => void;
@@ -31,20 +32,20 @@ const useCoinflipStore = create<CoinflipStore>((set, get) => ({
   coinflips: [],
   loading: true,
 
-  getCoinflips: async (token) => {
+  getCoinflips: async (token, errors) => {
     try {
       const res = await fetch(`${API}/games/coinflip/matches`, {
         headers: token ? { Authorization: token } : undefined,
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        toast.error(data?.message ?? "Couldn't load coinflips");
+        toast.error(data?.message ?? errors.load);
         set({ loading: false });
         return;
       }
       set({ coinflips: data.coinflips ?? [], loading: false });
     } catch {
-      toast.error("Something went wrong");
+      toast.error(errors.generic);
       set({ loading: false });
     }
   },
@@ -73,7 +74,9 @@ function CoinflipRow({
   onView: (id: string) => void;
   onDelete: (id: string) => void;
 }) {
+  const t = useTranslations("Coinflip");
   const [rolled, setRolled] = useState(!!cf.winner);
+  const locale = useLocale()
   const rarities = useSiteStore((s) => s.site!.rarities);
 
   const [sheetReady, setSheetReady] = useState(false);
@@ -105,11 +108,11 @@ function CoinflipRow({
   const { minimumValue: min, maximumValue: max } = cf.requirement;
   const range =
     min != null && max != null
-      ? `${format(min)} - ${format(max)}`
+      ? `${format(min, locale)} - ${format(max, locale)}`
       : min != null
-        ? `${format(min)}+`
+        ? `${format(min, locale)}+`
         : max != null
-          ? `up to ${format(max)}`
+          ? t("upTo", { value: format(max, locale) })
           : null;
 
   const slot = (u: CoinflipUser | null | undefined, right = false) =>
@@ -117,7 +120,7 @@ function CoinflipRow({
       <div className="relative w-9 h-9 shrink-0">
         <Image
           src={`/coins/${oppositeSide.toLowerCase()}.webp`}
-          alt={oppositeSide}
+          alt={t(`sides.${oppositeSide}`)}
           fill
           className="object-contain ml-0.75"
         />
@@ -160,7 +163,7 @@ function CoinflipRow({
           <Tooltip key={item._id}>
             <TooltipTrigger asChild>
               <div
-                className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#252839] shrink-0 overflow-hidden box-border cursor-pointer"
+                className="relative w-9.5 h-9.5 sm:w-11.5 sm:h-11.5 rounded-full bg-[#252839] shrink-0 overflow-hidden box-border cursor-pointer"
                 style={{ marginLeft: i === 0 ? 0 : -9 }}
               >
                 <Image
@@ -189,9 +192,9 @@ function CoinflipRow({
                 <Image
                   src={item.image}
                   alt={item.item}
-                  width={32}
-                  height={32}
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain w-6 h-6 sm:w-7.5 sm:h-7.5 rounded-[2px]"
+                  width={25}
+                  height={25}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain w-6 h-6 sm:w-7 sm:h-7"
                 />
               </div>
             </TooltipTrigger>
@@ -218,7 +221,7 @@ function CoinflipRow({
           <div className="flex flex-row items-center justify-center gap-1.25">
             <WalletIcon className="w-4.5 h-3.5 text-purple-secondary shrink-0" />
             <span className="text-[16px] leading-6 font-bold text-white whitespace-nowrap">
-              {format(cf.players.creator.totalValue)}
+              {format(cf.players.creator.totalValue, locale)}
             </span>
           </div>
           {range && (
@@ -231,12 +234,11 @@ function CoinflipRow({
 
       <div className="order-4 lg:order-none justify-self-end lg:w-40 flex flex-row items-center justify-end gap-2.5 shrink-0">
         {cf.winner && (
-          // Same size slot as the join / cancel button (icon-sm = 42px)
           <div className="relative w-[42px] h-[42px] shrink-0">
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 pointer-events-none">
               <Image
                 src={`/coins/${cf.winner.side.toLowerCase()}.webp`}
-                alt={cf.winner.side}
+                alt={t(`sides.${cf.winner.side}`)}
                 fill
                 className={`object-contain scale-[0.533] ${rolled ? "" : "opacity-0"
                   }`}
@@ -276,7 +278,7 @@ function CoinflipRow({
           <InventoryModal
             data={{
               action: {
-                button: "Join Flip",
+                button: t("joinFlip"),
                 endpoint: `${API}/games/coinflip/${cf._id}/join`,
                 secondaction: InventorySecondAction.AutoSelect,
                 secondactionData: {
@@ -297,7 +299,7 @@ function CoinflipRow({
                     <div
                       key={s}
                       className={`rounded-full flex items-center justify-center transition-opacity ${s === (cf.players.creator.side === "HEADS" ? "TAILS" : "HEADS") ? "" : "scale-97 opacity-40 "}`}                      >
-                      <Image src={`/coins/${s.toLowerCase()}.webp`} alt={s} width={40} height={40} />
+                      <Image src={`/coins/${s.toLowerCase()}.webp`} alt={t(`sides.${s}`)} width={40} height={40} />
                     </div>
                   ))}
                 </div>
@@ -327,6 +329,8 @@ function CoinflipRow({
 }
 
 export default function CoinflipLayout() {
+  const t = useTranslations("Coinflip");
+  const tc = useTranslations("Common");
   const { socket, token, user } = useSiteStore();
   const { coinflips, getCoinflips, addCoinflip, updateCoinflip, removeCoinflip } =
     useCoinflipStore();
@@ -341,7 +345,7 @@ export default function CoinflipLayout() {
   }, []);
 
   useEffect(() => {
-    void getCoinflips(token ?? null);
+    void getCoinflips(token ?? null, { load: t("loadError"), generic: tc("somethingWentWrong") });
   }, [token]);
 
   useEffect(() => {
@@ -383,32 +387,31 @@ export default function CoinflipLayout() {
       const data = await res.json();
       if (!res.ok || !data.success) return toast.error(data?.message);
     } catch {
-      toast.error("Something went wrong");
+      toast.error(tc("somethingWentWrong"));
     }
   };
 
   return (
-    <div className="flex flex-col items-center gap-5 sm:gap-7.5 p-3 sm:p-5 w-full">
-      <div className="flex flex-row flex-wrap justify-between items-center gap-y-3 gap-x-4 w-full select-none">
+  <div className="flex flex-col items-center gap-5 sm:gap-7.5 p-3 sm:p-5 w-full h-full select-none overflow-y-auto overflow-x-hidden scrollbar-none">      <div className="flex flex-row flex-wrap justify-between items-center gap-y-3 gap-x-4 w-full select-none">
         <div className="flex flex-row items-center gap-2.75 ml-1 sm:ml-2">
           <CoinflipIcon className="h-6 w-6" active={true} />
           <span className="text-[18px] sm:text-[22px] font-medium text-white">
-            Coinflip
+            {t("title")}
           </span>
         </div>
 
         <div className="flex flex-row flex-wrap items-center justify-between sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto">
           <span className="text-[12px] sm:text-[13px] font-medium text-white/80">
-            {stats.total} Total flips
+            {t("totalFlips", { count: stats.total })}
           </span>
           <div className="w-px h-8 sm:h-10.25 bg-[#27272A] rounded-full hidden sm:block" />
           <span className="text-[12px] sm:text-[13px] font-medium text-purple-primary/80">
-            {stats.joinable} Joinable flips
+            {t("joinableFlips", { count: stats.joinable })}
           </span>
           <InventoryModal
             data={{
               action: {
-                button: "Create Flip",
+                button: t("createFlip"),
                 endpoint: `${API}/games/coinflip/create`,
                 body: (items) => ({ items, side }),
                 closeComplete: true
@@ -424,7 +427,7 @@ export default function CoinflipLayout() {
                         className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-opacity ${side === s ? "" : "scale-97 opacity-40 hover:opacity-70"
                           }`}
                       >
-                        <Image src={`/coins/${s.toLowerCase()}.webp`} alt={s} width={40} height={40} />
+                        <Image src={`/coins/${s.toLowerCase()}.webp`} alt={t(`sides.${s}`)} width={40} height={40} />
                       </button>
                     ))}
                   </div>
@@ -434,7 +437,7 @@ export default function CoinflipLayout() {
               ),
             }}>
             <Button size="default" className="rounded-[15px] p-3 sm:p-3.5 h-10 sm:h-11.25 text-[13px]! sm:text-[14px]!">
-              Create Flip
+              {t("createFlip")}
             </Button>
           </InventoryModal>
         </div>

@@ -14,6 +14,7 @@ import { Button } from "../shadcn/button"
 import { ItemCard } from "../ui/others/item"
 import { Item } from "@/types/item"
 import Login from "./login"
+import { useLocale, useTranslations } from "next-intl"
 
 export enum InventorySecondAction {
   SelectAll = "selectAll",
@@ -71,6 +72,9 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
   const [selected, setSelected] = React.useState<Set<string>>(new Set())
   const [totalValue, setTotalValue] = React.useState(0)
   const [search, setSearch] = React.useState("")
+  const locale = useLocale();
+  const t = useTranslations("Inventory");
+  const tc = useTranslations("Common");
   const { token, inventory, user } = useSiteStore()
 
   const fetchInventory = React.useCallback(() => {
@@ -87,9 +91,9 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
         setItems(data.inventory ?? [])
         setTotalValue(data.total?.totalValue ?? 0)
       })
-      .catch(() => toast.error("Something went wrong"))
+      .catch(() => toast.error(tc("somethingWentWrong")))
       .finally(() => setLoading(false))
-  }, [token])
+  }, [token, tc])
 
   React.useEffect(() => {
     if (!open) return
@@ -105,7 +109,7 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
 
   const toggle = React.useCallback((id: string) => {
     if (!selected.has(id) && data.header?.maximumItems && selected.size >= data.header.maximumItems) {
-      toast.error(`You can only select ${data.header.maximumItems} items`)
+      toast.error(t("maxSelect", { count: data.header.maximumItems }))
       return
     }
     setSelected((prev) => {
@@ -113,7 +117,7 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
       next.has(id) ? next.delete(id) : next.add(id)
       return next
     })
-  }, [selected, data.header?.maximumItems])
+  }, [selected, data.header?.maximumItems, t])
 
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a, b) => {
@@ -155,7 +159,7 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
         if (data.action.closeComplete) return setOpen(false);
         fetchInventory();
       })
-      .catch(() => toast.error("Something went wrong")).finally(() => setActionLoading(false))
+      .catch(() => toast.error(tc("somethingWentWrong"))).finally(() => setActionLoading(false))
   }
 
   if (!user) return <Login>{children}</Login>
@@ -176,7 +180,7 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
+                placeholder={t("search")}
                 className="bg-transparent text-[15px] leading-4.5 text-grey placeholder:text-grey w-full outline-none select-none"
               />
             </div>
@@ -187,7 +191,7 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
 
           {!!data.header?.maximumItems && (
             <span className="hidden sm:block absolute mt-16 text-[12px] font-medium text-grey-unfaded whitespace-nowrap">
-              Maximum {data.header.maximumItems} items
+              {t("maximumItems", { count: data.header.maximumItems })}
             </span>
           )}
 
@@ -196,32 +200,32 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
               <div className="flex items-center gap-1.5 text-[14px] leading-3.75 min-w-0">
                 {data.header?.minimumValue !== undefined && data.header?.maximumValue !== undefined ? (
                   <>
-                    <span className="text-white font-[420] select-none whitespace-nowrap">To Join:</span>
+                    <span className="text-white font-[420] select-none whitespace-nowrap">{t("toJoin")}</span>
                     <WalletIcon className="w-3.75 h-3.75 shrink-0" />
-                    <span className="text-purple-gradient font-[420] truncate">{format(data.header.minimumValue)}</span>
+                    <span className="text-purple-gradient font-[420] truncate">{format(data.header.minimumValue, locale)}</span>
                     <span className="text-white font-[420] select-none">-</span>
                     <WalletIcon className="w-3.75 h-3.75 shrink-0" />
-                    <span className="text-purple-gradient font-[420] truncate">{format(data.header.maximumValue)}</span>
+                    <span className="text-purple-gradient font-[420] truncate">{format(data.header.maximumValue, locale)}</span>
                   </>
                 ) : (
                   <>
-                    <span className="text-white font-[420] select-none whitespace-nowrap">Total Value:</span>
+                    <span className="text-white font-[420] select-none whitespace-nowrap">{t("totalValue")}</span>
                     <WalletIcon className="w-3.75 h-3.75 shrink-0" />
-                    <span className="text-purple-gradient font-[420] truncate">{format(totalValue)}</span>
+                    <span className="text-purple-gradient font-[420] truncate">{format(totalValue, locale)}</span>
                   </>
                 )}
               </div>
               <div className="flex items-center gap-1.5 text-[14px] leading-3.75 min-w-0">
-                <span className="text-white font-[420] select-none whitespace-nowrap">Selected Value:</span>
+                <span className="text-white font-[420] select-none whitespace-nowrap">{t("selectedValue")}</span>
                 <WalletIcon className="w-3.75 h-3.75 shrink-0" />
-                <span className="text-purple-gradient font-[420] truncate">{format(selectedValue)}</span>
+                <span className="text-purple-gradient font-[420] truncate">{format(selectedValue, locale)}</span>
               </div>
             </div>
             <DialogClose asChild>
               <button
                 type="button"
                 className="flex items-center justify-center w-7.75 h-7.75 rounded-[7px] bg-wallet cursor-pointer shrink-0 leading-none"
-                aria-label="Close"
+                aria-label={t("close")}
               >
                 <X className="w-4.25 h-4.25 text-grey" />
               </button>
@@ -235,7 +239,7 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search..."
+                  placeholder={t("search")}
                   className="bg-transparent text-[15px] leading-4.5 text-grey placeholder:text-grey w-full min-w-0 outline-none select-none"
                 />
               </div>
@@ -246,7 +250,7 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
 
             {!!data.header?.maximumItems && (
               <span className="text-[12px] font-medium text-grey-unfaded whitespace-nowrap">
-                Maximum {data.header.maximumItems} items
+                {t("maximumItems", { count: data.header.maximumItems })}
               </span>
             )}
 
@@ -255,32 +259,32 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
                 <div className="flex items-center gap-1.5 text-[14px] leading-3.75 min-w-0">
                   {data.header?.minimumValue !== undefined && data.header?.maximumValue !== undefined ? (
                     <>
-                      <span className="text-white font-[420] select-none whitespace-nowrap">Range:</span>
+                      <span className="text-white font-[420] select-none whitespace-nowrap">{t("range")}</span>
                       <WalletIcon className="w-4 h-4 shrink-0" />
-                      <span className="text-purple-gradient font-[420]">{format(data.header.minimumValue)}</span>
+                      <span className="text-purple-gradient font-[420]">{format(data.header.minimumValue, locale)}</span>
                       <span className="text-white font-[420] select-none">-</span>
                       <WalletIcon className="w-4 h-4 shrink-0" />
-                      <span className="text-purple-gradient font-[420]">{format(data.header.maximumValue)}</span>
+                      <span className="text-purple-gradient font-[420]">{format(data.header.maximumValue, locale)}</span>
                     </>
                   ) : (
                     <>
-                      <span className="text-white font-[420] select-none whitespace-nowrap">Value:</span>
+                      <span className="text-white font-[420] select-none whitespace-nowrap">{t("value")}</span>
                       <WalletIcon className="w-4 h-4 shrink-0" />
-                      <span className="text-purple-gradient font-[420]">{format(totalValue)}</span>
+                      <span className="text-purple-gradient font-[420]">{format(totalValue, locale)}</span>
                     </>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5 text-[14px] leading-3.75 min-w-0">
-                  <span className="text-white font-[420] select-none whitespace-nowrap">Selected:</span>
+                  <span className="text-white font-[420] select-none whitespace-nowrap">{t("selected")}</span>
                   <WalletIcon className="w-4 h-4 shrink-0" />
-                  <span className="text-purple-gradient font-[420]">{format(selectedValue)}</span>
+                  <span className="text-purple-gradient font-[420]">{format(selectedValue, locale)}</span>
                 </div>
               </div>
               <DialogClose asChild>
                 <button
                   type="button"
                   className="flex items-center justify-center w-9 h-9 rounded-[10px] bg-wallet cursor-pointer shrink-0 leading-none"
-                  aria-label="Close"
+                  aria-label={t("close")}
                 >
                   <X className="w-5 h-5 text-grey" />
                 </button>
@@ -342,18 +346,18 @@ export default function InventoryModal({ children, data }: InventoryModalProps) 
                   return
                 }
                 if (data.header?.maximumItems && filteredItems.length > data.header.maximumItems) {
-                  toast.error(`You can only select ${data.header.maximumItems} items`)
+                  toast.error(t("maxSelect", { count: data.header.maximumItems }))
                   return
                 }
                 if (filteredItems.length > 0 && filteredItems.every((i) => selected.has(i._id))) {
-                  toast.error("You've already selected all items!")
+                  toast.error(t("alreadySelectedAll"))
                   return
                 }
                 setSelected(new Set(filteredItems.map((i) => i._id)))
               }}
               variant={"foreground"}
               className="w-full sm:w-auto rounded-[10px]">
-              <span className="bg-(image:--purple-gradient-secondary) bg-clip-text text-transparent">{data.action.secondaction === InventorySecondAction.AutoSelect ? "Auto select" : data.action.secondaction === InventorySecondAction.SelectBest ? "Select best" : "Select all"}</span>
+              <span className="bg-(image:--purple-gradient-secondary) bg-clip-text text-transparent">{data.action.secondaction === InventorySecondAction.AutoSelect ? t("autoSelect") : data.action.secondaction === InventorySecondAction.SelectBest ? t("selectBest") : t("selectAll")}</span>
             </Button>
             <Button onClick={handleAction} loading={actionLoading} className="rounded-xl w-full sm:w-auto items-center">{data.action.button}</Button>
           </div>
